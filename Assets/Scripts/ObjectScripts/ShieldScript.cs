@@ -9,8 +9,11 @@ public class ShieldScript : MonoBehaviour
         if (collision.CompareTag("Bullet")){
 
             Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
-            rb.velocity *= -1; 
+            
 
+            Vector2 dir = (collision.gameObject.transform.position - gameObject.transform.position).normalized * 1;
+
+            rb.velocity = dir* rb.velocity.magnitude;
             //Destroy(collision.gameObject);
         }
     }

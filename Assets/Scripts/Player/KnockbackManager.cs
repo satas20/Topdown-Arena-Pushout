@@ -16,7 +16,7 @@ public class KnockbackManager : MonoBehaviour
     }
     public void getKnocBack(float damage, GameObject skill)
     {
-        Vector2 dir = (skill.gameObject.transform.position - gameObject.transform.position) * -1;
+        Vector2 dir = (skill.gameObject.transform.position - gameObject.transform.position).normalized * -1;
 
         rb.velocity = dir * damage * healthScript.missingHealth();
 
