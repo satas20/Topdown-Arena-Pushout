@@ -19,6 +19,5 @@ public class KnockbackManager : MonoBehaviour
         Vector2 dir = (skill.gameObject.transform.position - gameObject.transform.position).normalized * -1;
 
         rb.velocity = dir * damage * healthScript.missingHealth();
-
     }
 }
