@@ -15,5 +15,5 @@ MonoBehaviour:
   name: Shield
   cooldownTime: 3
   activeTime: 1
-  castTime: 0
+  castTime: 0.005
   instantiateable: {fileID: 467974180421464338, guid: 5f2e521d06e18c14b8b82d8d303d44fc, type: 3}

@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class AbilityHolder : MonoBehaviour
+public class AbilityHolder : NetworkBehaviour
 {
+
     public Ability ability;
     float cooldownTime;
     float activeTime;
@@ -19,11 +21,13 @@ public class AbilityHolder : MonoBehaviour
     public KeyCode key;
     private void Update()
     {
+        if (!IsOwner) return;
         switch (state)
         {
             case AbilityState.ready:
                 if (Input.GetKeyDown(key)&& !gameObject.GetComponent<PlayerManager>().isCasting)
                 {
+                    RequestCastServerRpc();
                     ability.Cast(gameObject);
                     state = AbilityState.cast;
                     castTime = ability.castTime;
@@ -36,6 +40,7 @@ public class AbilityHolder : MonoBehaviour
                 }
                 else
                 {
+                    RequestActivateServerRpc();
                     ability.Activate(gameObject);
                     state = AbilityState.active;
                     activeTime = ability.activeTime;
@@ -46,6 +51,7 @@ public class AbilityHolder : MonoBehaviour
                     activeTime -= Time.deltaTime;
                 }
                 else{
+                    RequestCooldownServerRpc();
                     ability.BeginCooldown(gameObject);
                     state = AbilityState.cooldown;
                     cooldownTime = ability.cooldownTime;
@@ -61,6 +67,37 @@ public class AbilityHolder : MonoBehaviour
                 }
                 break;
         }
-             
+
+        
     }
+    [ServerRpc]
+    private void RequestCastServerRpc(){
+        CastClientRpc();
+    }
+    [ServerRpc]
+    private void RequestActivateServerRpc()
+    {
+        ActivateClientRpc();
+    }
+    [ServerRpc]
+    private void RequestCooldownServerRpc()
+    {
+        CooldownClientRpc();
+    }
+
+    [ClientRpc]
+    private void CastClientRpc(){
+        if(!IsOwner)ability.Cast(gameObject);
+    }
+    [ClientRpc]
+    private void ActivateClientRpc()
+    {
+        if (!IsOwner) ability.Activate(gameObject);
+    }
+    [ClientRpc]
+    private void CooldownClientRpc()
+    {
+        if (!IsOwner) ability.BeginCooldown(gameObject);
+    }
+
 }
